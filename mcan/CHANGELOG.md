@@ -4,6 +4,9 @@ Tagging in git follows a pattern: `mcan/<version>`.
 
 ## [Unreleased]
 
+### Added
+- Add method to disable automatic retransmission (#60)
+
 ## [0.7.0] - 2025-04-23
 
 ### Added
