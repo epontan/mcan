@@ -54,8 +54,11 @@ pub trait DynTx {
         -> nb::Result<(), Error>;
 
     /// Puts a frame in the queue to be sent on the bus.
+    ///
+    /// Returns the index of the queued TX buffer.
+    ///
     /// Fails with [`nb::Error::WouldBlock`] if the transmit buffer is full.
-    fn transmit_queued(&mut self, message: Self::Message) -> nb::Result<(), Error>;
+    fn transmit_queued(&mut self, message: Self::Message) -> nb::Result<usize, Error>;
 
     /// Allow [`Interrupt::TransmissionCancellationFinished`] to be triggered by
     /// `to_be_enabled`. Interrupts for other buffers remain unchanged.
@@ -275,9 +278,10 @@ impl<P: mcan_core::CanId, C: Capacities> DynTx for Tx<'_, P, C> {
         self.transmit(index, message)
     }
 
-    fn transmit_queued(&mut self, message: Self::Message) -> nb::Result<(), Error> {
+    fn transmit_queued(&mut self, message: Self::Message) -> nb::Result<usize, Error> {
         let index = self.find_put_index().ok_or(nb::Error::WouldBlock)?;
-        self.transmit(index, message)
+        self.transmit(index, message)?;
+        Ok(index)
     }
 
     fn enable_cancellation_interrupt(&mut self, to_be_enabled: TxBufferSet) {
