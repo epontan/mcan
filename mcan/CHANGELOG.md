@@ -7,6 +7,7 @@ Tagging in git follows a pattern: `mcan/<version>`.
 ### Added
 - Add method to disable automatic retransmission (#60)
 - Return index of the queued Tx buffer
+- Add ability to get current Tx FIFO index
 
 ## [0.7.0] - 2025-04-23
 

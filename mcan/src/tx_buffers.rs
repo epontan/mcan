@@ -121,6 +121,9 @@ pub trait DynTx {
 
     /// Request cancellation of a transmit buffer. See [`Self::cancel_multi`].
     fn cancel(&mut self, index: usize) -> nb::Result<(), Infallible>;
+
+    /// Get TX FIFO read index
+    fn get_fifo_index(&self) -> usize;
 }
 
 impl<'a, P: mcan_core::CanId, C: Capacities> Tx<'a, P, C> {
@@ -344,6 +347,10 @@ impl<P: mcan_core::CanId, C: Capacities> DynTx for Tx<'_, P, C> {
 
     fn cancel(&mut self, index: usize) -> nb::Result<(), Infallible> {
         self.cancel_multi([index].into_iter().collect())
+    }
+
+    fn get_fifo_index(&self) -> usize {
+        self.txfqs().read().tfgi().bits() as usize
     }
 }
 
